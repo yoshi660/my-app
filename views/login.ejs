@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ログイン | ブクマ</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <%- include("header") %>
+
+  <main>
+    <h2>ログイン</h2>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <form class="card form-grid" method="post" action="/login">
+      <input type="email" name="email" placeholder="メールアドレス" required />
+      <input type="password" name="password" placeholder="パスワード" required />
+      <button type="submit">ログイン</button>
+    </form>
+
+    <p class="note" style="margin-top: 12px;">アカウントがない方は<a href="/signup">会員登録</a></p>
+  </main>
+</body>
+</html>

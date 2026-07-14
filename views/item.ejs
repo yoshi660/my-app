@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= item.title %> | ブクマ</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <%- include("header") %>
+
+  <main>
+    <div class="card">
+      <% const labels = { textbook: "教科書", past_exam: "過去問", note: "ノート" }; %>
+      <span class="badge badge-<%= item.itemType %>"><%= labels[item.itemType] %></span>
+      <% if (item.status === "sold") { %>
+        <span class="badge badge-sold">売切</span>
+      <% } %>
+
+      <h2><%= item.title %></h2>
+      <p class="detail-price">¥<%= item.price.toLocaleString() %></p>
+
+      <table>
+        <tr><th>授業</th><td><%= item.course ? item.course.name : "未設定" %></td></tr>
+        <% if (item.course && item.course.faculty) { %>
+          <tr><th>学部</th><td><%= item.course.faculty.name %></td></tr>
+        <% } %>
+        <% if (item.course && item.course.campus) { %>
+          <tr><th>キャンパス</th><td><%= item.course.campus %></td></tr>
+        <% } %>
+        <% if (item.condition) { %>
+          <% const condLabels = { new: "新品同様", good: "目立った傷なし", used: "使用感あり" }; %>
+          <tr><th>状態</th><td><%= condLabels[item.condition] || item.condition %></td></tr>
+        <% } %>
+        <tr><th>出品者</th><td><%= item.seller.displayName %></td></tr>
+      </table>
+
+      <% if (item.description) { %>
+        <p style="margin-top: 12px;"><%= item.description %></p>
+      <% } %>
+
+      <% if (item.course && item.course.advice) { %>
+        <div class="advice-box">
+          <strong>💡 履修アドバイス（<%= item.course.name %>）</strong><br />
+          <%= item.course.advice %>
+        </div>
+      <% } %>
+
+      <!-- 購入ボタン：状態によって出し分け -->
+      <% if (item.status === "sold") { %>
+        <button class="buy-button" disabled>売り切れました</button>
+      <% } else if (!currentUser) { %>
+        <p class="note" style="margin-top: 16px;">購入するには<a href="/login">ログイン</a>してください。</p>
+      <% } else if (currentUser.id === item.sellerId) { %>
+        <p class="note" style="margin-top: 16px;">これはあなたの出品です。</p>
+      <% } else { %>
+        <form method="post" action="/items/<%= item.id %>/purchase">
+          <button class="buy-button" type="submit">購入する</button>
+        </form>
+      <% } %>
+    </div>
+
+    <p style="margin-top: 16px;"><a href="/">← 一覧に戻る</a></p>
+  </main>
+</body>
+</html>

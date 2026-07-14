@@ -1,0 +1,20 @@
+<header>
+  <div class="header-inner">
+    <div>
+      <h1><a href="/">📚 ブクマ</a></h1>
+      <p class="tagline">慶應生同士で教科書・過去問・ノートを売買</p>
+    </div>
+    <nav>
+      <% if (currentUser) { %>
+        <span><%= currentUser.displayName %> さん</span>
+        <a href="/mypage">マイページ</a>
+        <form method="post" action="/logout">
+          <button type="submit">ログアウト</button>
+        </form>
+      <% } else { %>
+        <a href="/login">ログイン</a>
+        <a href="/signup">会員登録</a>
+      <% } %>
+    </nav>
+  </div>
+</header>

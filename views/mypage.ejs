@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>マイページ | ブクマ</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <%- include("header") %>
+
+  <main>
+    <% const labels = { textbook: "教科書", past_exam: "過去問", note: "ノート" }; %>
+
+    <h2>自分の出品（<%= myItems.length %>件）</h2>
+    <% if (myItems.length === 0) { %>
+      <p class="note">まだ出品がありません。</p>
+    <% } else { %>
+      <table>
+        <tr><th>商品名</th><th>種別</th><th>価格</th><th>状態</th></tr>
+        <% for (const item of myItems) { %>
+          <tr>
+            <td><a href="/items/<%= item.id %>"><%= item.title %></a></td>
+            <td><%= labels[item.itemType] %></td>
+            <td>¥<%= item.price.toLocaleString() %></td>
+            <td>
+              <% if (item.status === "sold") { %>
+                <span class="badge badge-sold">売切</span>
+              <% } else { %>
+                <span class="badge badge-textbook">販売中</span>
+              <% } %>
+            </td>
+          </tr>
+        <% } %>
+      </table>
+    <% } %>
+
+    <h2>購入履歴（<%= myPurchases.length %>件）</h2>
+    <% if (myPurchases.length === 0) { %>
+      <p class="note">まだ購入がありません。</p>
+    <% } else { %>
+      <table>
+        <tr><th>商品名</th><th>価格</th><th>出品者</th><th>購入日</th></tr>
+        <% for (const t of myPurchases) { %>
+          <tr>
+            <td><a href="/items/<%= t.item.id %>"><%= t.item.title %></a></td>
+            <td>¥<%= t.item.price.toLocaleString() %></td>
+            <td><%= t.item.seller.displayName %></td>
+            <td><%= t.createdAt.toLocaleDateString("ja-JP") %></td>
+          </tr>
+        <% } %>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

@@ -1,24 +1,77 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ユーザー一覧</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ブクマ | 慶應生の教科書売買</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <h1>ユーザー一覧</h1>
-  <ul>
-  <% users.forEach(user => { %>
-    <li><%= user.name %>（<%= user.age ? user.age + '歳' : '年齢未設定' %>）</li>
-  <% }) %>
-</ul>
+  <%- include("header") %>
 
-<h2>ユーザー追加</h2>
-<form action="/users" method="post">
-  <input type="text" name="name" placeholder="名前" required>
-  <input type="number" name="age" placeholder="年齢">
-  <button type="submit">追加</button>
-</form>
+  <main>
+    <!-- 検索 -->
+    <form class="search-bar" method="get" action="/">
+      <input type="text" name="q" placeholder="教科書名・授業名で検索" value="<%= q %>" />
+      <select name="type">
+        <option value="" <%= type === "" ? "selected" : "" %>>すべて</option>
+        <option value="textbook" <%= type === "textbook" ? "selected" : "" %>>教科書</option>
+        <option value="past_exam" <%= type === "past_exam" ? "selected" : "" %>>過去問</option>
+        <option value="note" <%= type === "note" ? "selected" : "" %>>ノート</option>
+      </select>
+      <button type="submit">検索</button>
+    </form>
 
+    <!-- 商品一覧 -->
+    <h2>販売中の商品（<%= items.length %>件）</h2>
+    <% if (items.length === 0) { %>
+      <p>該当する商品がありません。</p>
+    <% } else { %>
+      <div class="items-grid">
+        <% const labels = { textbook: "教科書", past_exam: "過去問", note: "ノート" }; %>
+        <% for (const item of items) { %>
+          <a class="item-card" href="/items/<%= item.id %>">
+            <span class="badge badge-<%= item.itemType %>"><%= labels[item.itemType] %></span>
+            <h3><%= item.title %></h3>
+            <p class="course">
+              <%= item.course ? item.course.name : "授業未設定" %>
+              <% if (item.course && item.course.campus) { %>（<%= item.course.campus %>）<% } %>
+            </p>
+            <p class="price">¥<%= item.price.toLocaleString() %></p>
+          </a>
+        <% } %>
+      </div>
+    <% } %>
 
+    <!-- 出品フォーム -->
+    <h2>出品する</h2>
+    <% if (currentUser) { %>
+      <form class="card form-grid" method="post" action="/items">
+        <input type="text" name="title" placeholder="商品名（例: ディジタル信号処理の基礎）" required />
+        <select name="item_type" required>
+          <option value="textbook">教科書</option>
+          <option value="past_exam">過去問</option>
+          <option value="note">ノート</option>
+        </select>
+        <input type="number" name="price" placeholder="価格（円）" min="0" required />
+        <select name="course_id">
+          <option value="">授業を選択（任意）</option>
+          <% for (const course of courses) { %>
+            <option value="<%= course.id %>"><%= course.name %></option>
+          <% } %>
+        </select>
+        <select name="condition">
+          <option value="">状態を選択（任意）</option>
+          <option value="new">新品同様</option>
+          <option value="good">目立った傷なし</option>
+          <option value="used">使用感あり</option>
+        </select>
+        <textarea name="description" rows="2" placeholder="説明（受け渡し場所など）"></textarea>
+        <button type="submit">出品する</button>
+      </form>
+    <% } else { %>
+      <p class="card note">出品するには<a href="/login">ログイン</a>または<a href="/signup">会員登録</a>してください。</p>
+    <% } %>
+  </main>
 </body>
 </html>
