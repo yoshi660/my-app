@@ -24,9 +24,14 @@ app.get("/", async (req, res) => {
 
 // フォームで送信したとき（POSTリクエスト）の処理
 app.post("/users", async (req, res) => {
-  const name = req.body.name;
+  const { name, age } = req.body;
   if (name) {
-    await prisma.user.create({ data: { name } });
+    await prisma.user.create({ 
+      data: { 
+        name, 
+        age: age ? parseInt(age) : null 
+      } 
+    });
   }
   res.redirect("/");
 });
