@@ -1,6 +1,7 @@
 export default {
   schema: "prisma/schema.prisma",
   datasource: {
-    url: "postgres://postgres:postgres@localhost:51214/template1?sslmode=disable&connection_limit=10&connect_timeout=0&max_idle_connection_lifetime=0&pool_timeout=0&socket_timeout=0"
+    // 直接書かずに、その時々の住所（DATABASE_URL）を見るようにするのじゃ
+    url: process.env.DATABASE_URL
   }
 };
